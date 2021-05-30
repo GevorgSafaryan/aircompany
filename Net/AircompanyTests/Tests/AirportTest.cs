@@ -10,66 +10,48 @@ namespace AircompanyTests.Tests
     [TestFixture]
     public class AirportTest
     {
-        private List<Plane> planes = new List<Plane>(){
-           new PassengerPlane("Boeing-737", 900, 12000, 60500, 164),
-           new PassengerPlane("Boeing-737-800", 940, 12300, 63870, 192),
-           new PassengerPlane("Boeing-747", 980, 16100, 70500, 242),
-           new PassengerPlane("Airbus A320", 930, 11800, 65500, 188),
-           new PassengerPlane("Airbus A330", 990, 14800, 80500, 222),
-           new PassengerPlane("Embraer 190", 870, 8100, 30800, 64),
-           new PassengerPlane("Sukhoi Superjet 100", 870, 11500, 50500, 140),
-           new PassengerPlane("Bombardier CS300", 920, 11000, 60700, 196),
-           new MilitaryPlane("B-1B Lancer", 1050, 21000, 80000, MilitaryType.BOMBER),
-           new MilitaryPlane("B-2 Spirit", 1030, 22000, 70000, MilitaryType.BOMBER),
-           new MilitaryPlane("B-52 Stratofortress", 1000, 20000, 80000, MilitaryType.BOMBER),
-           new MilitaryPlane("F-15", 1500, 12000, 10000, MilitaryType.FIGHTER),
-           new MilitaryPlane("F-22", 1550, 13000, 11000, MilitaryType.FIGHTER),
-           new MilitaryPlane("C-130 Hercules", 650, 5000, 110000, MilitaryType.TRANSPORT)
-   };
+        public static List<Plane> planes = new List<Plane>() {
+            new PassengerPlane(new PlaneSpecification { Model = "Boeing-737", MaxSpeed = 900, MaxFlightDistance = 12000, MaxLoadCapacity = 60500 }, 164),
+            new PassengerPlane(new PlaneSpecification { Model = "Boeing-737-800", MaxSpeed = 940, MaxFlightDistance = 12300, MaxLoadCapacity = 63870 }, 192),
+            new PassengerPlane(new PlaneSpecification { Model = "Boeing-747", MaxSpeed = 980, MaxFlightDistance = 16100, MaxLoadCapacity = 70500 }, 242),
+            new PassengerPlane(new PlaneSpecification { Model = "Airbus A320", MaxSpeed = 930, MaxFlightDistance = 11800, MaxLoadCapacity = 65500 }, 188),
+            new PassengerPlane(new PlaneSpecification { Model = "Airbus A330", MaxSpeed = 990, MaxFlightDistance = 14800, MaxLoadCapacity = 80500 }, 222),
+            new PassengerPlane(new PlaneSpecification { Model = "Embraer 190", MaxSpeed = 870, MaxFlightDistance = 8100, MaxLoadCapacity = 30800 }, 64),
+            new PassengerPlane(new PlaneSpecification { Model = "Sukhoi Superjet 100", MaxSpeed = 870, MaxFlightDistance = 11500, MaxLoadCapacity = 50500 }, 140),
+            new PassengerPlane(new PlaneSpecification { Model = "Bombardier CS300", MaxSpeed = 920, MaxFlightDistance = 11000, MaxLoadCapacity = 60700 }, 196),
+            new MilitaryPlane(new PlaneSpecification { Model = "B-1B Lancer", MaxSpeed = 1050, MaxFlightDistance = 21000, MaxLoadCapacity = 80000 }, MilitaryType.BOMBER),
+            new MilitaryPlane(new PlaneSpecification { Model = "B-2 Spirit", MaxSpeed = 1030, MaxFlightDistance = 22000, MaxLoadCapacity = 70000 }, MilitaryType.BOMBER),
+            new MilitaryPlane(new PlaneSpecification { Model = "B-52 Stratofortress", MaxSpeed = 1000, MaxFlightDistance = 20000, MaxLoadCapacity = 80000 }, MilitaryType.BOMBER),
+            new MilitaryPlane(new PlaneSpecification { Model = "F-15", MaxSpeed = 1500, MaxFlightDistance = 12000, MaxLoadCapacity = 10000 }, MilitaryType.FIGHTER),
+            new MilitaryPlane(new PlaneSpecification { Model = "F-22", MaxSpeed = 1550, MaxFlightDistance = 13000, MaxLoadCapacity = 11000 }, MilitaryType.FIGHTER),
+            new MilitaryPlane(new PlaneSpecification { Model = "C-130 Hercules", MaxSpeed = 650, MaxFlightDistance = 5000, MaxLoadCapacity = 110000 }, MilitaryType.TRANSPORT)
+    };
 
-        private PassengerPlane planeWithMaxPassengerCapacity = new PassengerPlane("Boeing-747", 980, 16100, 70500, 242);
+        private PassengerPlane planeWithMaxPassengerCapacity = new PassengerPlane(new PlaneSpecification { Model = "Boeing-747", MaxSpeed = 980, MaxFlightDistance = 16100, MaxLoadCapacity = 70500 }, 242);
 
         [Test]
-        public void MyTest1()
+        public void FilterMilitaryPlanesByTypeTransport()
         {
             Airport airport = new Airport(planes);
             List<MilitaryPlane> transportMilitaryPlanes = airport.GetTransportMilitaryPlanes().ToList();
-            bool hasMilitaryTransportPlane = false;
-            foreach (MilitaryPlane militaryPlane in transportMilitaryPlanes)
-            {
-                if ((militaryPlane.PlaneTypeIs() == MilitaryType.TRANSPORT))
-                {
-                    hasMilitaryTransportPlane = true;
-                }
-            }
-            Assert.IsTrue(hasMilitaryTransportPlane);
+            Assert.AreEqual(transportMilitaryPlanes.Count, 1);
         }
 
         [Test]
-        public void MyTest2()
+        public void GetPassengerPlaneWithMaxPassengersCapacity()
         {
             Airport airport = new Airport(planes);
-            PassengerPlane expectedPlaneWithMaxPassengersCapacity = airport.GetPassengerPlaneWithMaxPassengersCapacity();           
+            PassengerPlane expectedPlaneWithMaxPassengersCapacity = airport.GetPassengerPlaneWithMaxPassengersCapacity();
+            Assert.AreEqual(expectedPlaneWithMaxPassengersCapacity, planeWithMaxPassengerCapacity);
         }
 
         [Test]
-        public void MyTest3()
+        public void SortPlanesByMaxLoadCapacity()
         {
             Airport airport = new Airport(planes);
             airport = airport.SortByMaxLoadCapacity();
             List<Plane> planesSortedByMaxLoadCapacity = airport.GetPlanes().ToList();
-
-            bool nextPlaneMaxLoadCapacityIsHigherThanCurrent = true;
-            for (int i = 0; i < planesSortedByMaxLoadCapacity.Count - 1; i++)
-            {
-                Plane currentPlane = planesSortedByMaxLoadCapacity[i];
-                Plane nextPlane = planesSortedByMaxLoadCapacity[i + 1];
-                if (currentPlane.MAXLoadCapacity() > nextPlane.MAXLoadCapacity())
-                {
-                    nextPlaneMaxLoadCapacityIsHigherThanCurrent = false;
-                }
-            }
-            Assert.That(nextPlaneMaxLoadCapacityIsHigherThanCurrent==true);
+            Assert.That(planesSortedByMaxLoadCapacity, Is.Ordered.Ascending);
         }
     }
 }
