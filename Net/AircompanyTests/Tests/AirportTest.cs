@@ -51,7 +51,8 @@ namespace AircompanyTests.Tests
             Airport airport = new Airport(planes);
             airport = airport.SortByMaxLoadCapacity();
             List<Plane> planesSortedByMaxLoadCapacity = airport.GetPlanes().ToList();
-            Assert.That(planesSortedByMaxLoadCapacity, Is.Ordered.Ascending);
+            List<int> sortedListOfMaxCapacities = planesSortedByMaxLoadCapacity.Select(p => p.MaxLoadCapacity()).ToList();
+            Assert.That(sortedListOfMaxCapacities, Is.Ordered.Ascending);
         }
     }
 }
